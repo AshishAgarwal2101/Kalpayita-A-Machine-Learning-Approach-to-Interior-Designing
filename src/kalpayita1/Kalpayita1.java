@@ -15,8 +15,12 @@ public class Kalpayita1 {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
-        NewJPanel jpanel = new NewJPanel();
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                HelloJME3.initWindowComponents();
+                HelloJME3.initComponents();
+            }
+        });
     }
     
 }

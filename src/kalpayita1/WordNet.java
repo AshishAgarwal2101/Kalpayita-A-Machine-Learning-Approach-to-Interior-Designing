@@ -30,6 +30,9 @@ public class WordNet {
   private Map<String,Boolean> _isPhysicalObject;
   private Map<String,Boolean> _isNonPersonLocationPhysicalObject;
   private Map<String,Boolean> _isMaterial;
+  private Map<String,Boolean> _isPattern;
+  private Map<String,Boolean> _isColor;
+  private Map<String,Boolean> _isShape;
   private Map<String,Boolean> _isPersonOrGroup;
   private Map<String,Boolean> _isNamedEntity;
   private Map<String,Boolean> _isLocation;
@@ -76,6 +79,9 @@ public class WordNet {
     str += " " + (_isPhysicalObject != null ? _isPhysicalObject.size() : 0);
     str += " " + (_isNonPersonLocationPhysicalObject != null ? _isNonPersonLocationPhysicalObject.size() : 0);
     str += " " + (_isMaterial != null ? _isMaterial.size() : 0);
+    str += " " + (_isColor != null ? _isColor.size() : 0);
+    str += " " + (_isShape != null ? _isShape.size() : 0);
+    str += " " + (_isPattern!= null ? _isPattern.size() : 0);
     str += " " + (_isPersonOrGroup != null ? _isPersonOrGroup.size() : 0);
     str += " " + (_isNamedEntity != null ? _isNamedEntity.size() : 0);
     str += " " + (_isLocation != null ? _isLocation.size() : 0);
@@ -542,6 +548,15 @@ public class WordNet {
     }
     return false;
   }
+   private boolean isPropertyColorSynset(Synset synset) {
+    if( synset != null ) {
+      Word[] words = synset.getWords();
+      if( words.length >= 1 && 
+          ( words[0].getLemma().equals("achromatic_color") || words[0].getLemma().equals("chromatic_color")) )
+        return true;
+    }
+    return false;
+  }
   
   public boolean isTimeSynset(Synset synset) {
     if( synset != null ) {
@@ -701,6 +716,29 @@ public class WordNet {
    * @return true if the token has a synset with an ancestor that is a physical object
    *         synset.
    */
+  public boolean isColor(String token) {
+    if( _isColor == null ) _isColor = new HashMap<String, Boolean>();
+    if( _isColor.containsKey(token) ) return _isColor.get(token);
+
+    Synset[] synsets = synsetsOf(token, POS.NOUN);
+    if( synsets == null ) {
+    }
+    else {
+      for( Synset synset : synsets ) {
+        List<Synset> chain = hypernymChainKeepChild(synset);
+        if( chain != null ) {
+          for( Synset parent : chain ) {
+            if( isPropertyColorSynset(parent) ) {
+              _isColor.put(token, true);
+              return true;
+            }
+          }
+        }
+      }
+    }
+    _isColor.put(token, false);
+    return false;
+  }
   public boolean isPhysicalObject(String token) {
     if( _isPhysicalObject == null ) _isPhysicalObject = new HashMap<String, Boolean>();
     if( _isPhysicalObject.containsKey(token) ) return _isPhysicalObject.get(token);
@@ -745,7 +783,19 @@ public class WordNet {
         if( chain != null ) {
           for( Synset parent : chain ) {
             Word[] words = parent.getWords();
-            if( words.length >= 1 && words[0].getLemma().equals("material") ) {
+            if( words.length >= 1 && words[0].getLemma().equals("fabric") 
+                    || words[0].getLemma().equals("wood")
+                    || words[0].getLemma().equals("glass")
+                    || words[0].getLemma().equals("plastic")
+                    || words[0].getLemma().equals("ceramic")
+                    || words[0].getLemma().equals("rock")
+                    || words[0].getLemma().equals("paper")
+                    || ! words[0].getLemma().equals("piece")
+                    || ! words[0].getLemma().equals("meshwork")
+                    || ! words[0].getLemma().equals("card")
+                    || ! words[0].getLemma().equals("piece of paper")
+                    || words[0].getLemma().equals("metal")
+                    || words[0].getLemma().equals("alloy")) {
               _isMaterial.put(token, true);
               return true;
             }
@@ -757,6 +807,70 @@ public class WordNet {
     return false;
   }
   
+  public boolean isPattern(String token) {
+    if( _isPattern == null ) _isPattern = new HashMap<String, Boolean>();
+    if( _isPattern.containsKey(token) ) return _isPattern.get(token);
+
+    Synset[] synsets = synsetsOf(token, POS.ADJECTIVE);
+    if( synsets == null ) {
+    }
+    else {
+        
+      for( Synset synset : synsets ) {
+       
+        List<Synset> chain = hypernymChainKeepChild(synset);
+         
+        if( chain != null ) {
+          for( Synset parent : chain ) {
+              
+            Word[] words = parent.getWords();
+               
+            if( words.length >= 1 && words[0].getLemma().equals("patterned") ) {
+             
+              _isPattern.put(token, true);
+              return true;
+            }
+            
+          }
+        }
+      }
+    }
+    _isPattern.put(token, false);
+    return false;
+  }
+  public boolean isShape(String token) {
+    if( _isShape == null ) _isShape = new HashMap<String, Boolean>();
+    if( _isShape.containsKey(token) ) return _isShape.get(token);
+
+    Synset[] synsets = synsetsOf(token, POS.NOUN);
+    if( synsets == null ) {
+    }
+    else {
+        
+      for( Synset synset : synsets ) {
+     
+        List<Synset> chain = hypernymChainKeepChild(synset);
+           
+        if( chain != null ) {
+          for( Synset parent : chain ) {
+             
+            Word[] words = parent.getWords();
+              
+            if( words.length >= 2 && (words[0].getLemma().equals("shape") || words[1].getLemma().equals("shape"))) {
+             
+              _isShape.put(token, true);
+              return true;
+            }
+           
+            
+          }
+        }
+      }
+    }
+    _isShape.put(token, false);
+    return false;
+  }
+ 
   /**
    * Assumes the given token is a noun.
    * @return true if the token has a synset with an ancestor that is the Event
@@ -914,7 +1028,7 @@ public class WordNet {
     System.out.println(word4 + " verb lemma = " + verbToLemma(word4));
     
     
-    String[] words2 = { "house", "right", "gun", "walk" };
+    String[] words2 = { "house", "color", "gun", "walk" };
     for( String token : words2 )
       System.out.println(token + " physobj = " + isPhysicalObject(token) + " loc = " + isLocation(token));
     
@@ -931,7 +1045,7 @@ public class WordNet {
   }
 
   public static void main(String[] args) {
-    WordNet net = new WordNet("C:\\Users\\jaisa\\OneDrive\\Documents\\NetBeansProjects\\Kalpayita\\src\\resources\\properties.xml");
+    WordNet net = new WordNet("src\\resources\\WordNet\\properties.xml");
     net.test();
   }
 }

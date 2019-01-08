@@ -1,0 +1,69 @@
+{
+"relations_mapping": {
+"bedroom": {
+"behind": "back_of",
+"adjacent": "front_of",
+"below": "below",
+"front": "front_of",
+"left": "left_of",
+"above": "above",
+"opposite": "right_of",
+"on": "supported_by",
+"near": "left_of",
+"next": "left_of",
+"under": "below",
+"top": "above",
+"inside": "supported_by",
+"in": "supported_by"
+"right": "right_of",
+"beside": "right_of",
+"with": "supports",
+"back": "back_of",
+"supports": "supports"
+},
+"office": {
+"behind": "back_of",
+"adjacent": "front_of",
+"below": "below",
+"front": "front_of",
+"left": "left_of",
+"above": "above",
+"opposite": "right_of",
+"on": "supported_by",
+"near": "left_of",
+"next": "left_of",
+"under": "below",
+"top": "above",
+"inside": "supported_by",
+"in": "supported_by"
+"right": "right_of",
+"beside": "right_of",
+"with": "supports",
+"back": "back_of",
+"supports": "supports"
+},
+"living_room": {
+"behind": "back_of",
+"adjacent": "front_of",
+"below": "below",
+"front": "front_of",
+"left": "left_of",
+"above": "above",
+"opposite": "right_of",
+"on": "supported_by",
+"near": "left_of",
+"next": "left_of",
+"under": "below",
+"top": "above",
+"inside": "supported_by",
+"in": "supported_by"
+"right": "right_of",
+"beside": "right_of",
+"with": "supports",
+"back": "back_of",
+"supports": "supports"
+}
+}
+
+"standard_relations":["back_of","front_of","above","below","supported_by","left_of","right_of","supports"]
+}
